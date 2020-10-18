@@ -1,6 +1,6 @@
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
 import SignUpController from './signup'
-import { AccountModel, AddAccountModel, EmailValidator, IAddAccount } from './signup-protocols'
+import { AccountModel, AddAccountModel, EmailValidator, AddAccount } from './signup-protocols'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -11,8 +11,8 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub()
 }
 
-const makeAddAccount = (): IAddAccount => {
-  class AddAccountStub implements IAddAccount {
+const makeAddAccount = (): AddAccount => {
+  class AddAccountStub implements AddAccount {
     async add (account: AddAccountModel): Promise<AccountModel> {
       const fakeAccount = {
         id: 'valid_id',
@@ -29,7 +29,7 @@ const makeAddAccount = (): IAddAccount => {
 interface SutTypes {
   sut: SignUpController
   emailValidatorStub: EmailValidator
-  addAccountStub: IAddAccount
+  addAccountStub: AddAccount
 }
 
 const makeSut = (): SutTypes => {
