@@ -1,4 +1,4 @@
-import { Validator } from '.'
+import { Validator } from '../../protocols'
 import { MissingParamError } from '../../errors'
 import { ValidatorComposite } from './validator-composite'
 
