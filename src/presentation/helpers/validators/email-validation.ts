@@ -3,16 +3,10 @@ import { Validator } from '../../protocols/validator'
 import { InvalidParamError } from '../../errors'
 
 export class EmailValidation implements Validator {
-  private readonly fieldName: string
-  private readonly emailValidator: EmailValidator
-
   constructor (
-    fieldName: string,
-    emailValidator: EmailValidator
-  ) {
-    this.fieldName = fieldName
-    this.emailValidator = emailValidator
-  }
+    private readonly fieldName: string,
+    private readonly emailValidator: EmailValidator
+  ) {}
 
   validate (input: any): Error {
     const isValid = this.emailValidator.isValid(input[this.fieldName])

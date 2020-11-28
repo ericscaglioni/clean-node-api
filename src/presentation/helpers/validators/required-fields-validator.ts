@@ -2,11 +2,7 @@ import { MissingParamError } from '../../errors'
 import { Validator } from '../../protocols/validator'
 
 export class RequiredFieldsValidator implements Validator {
-  private readonly fieldNames: string[]
-
-  constructor (fieldNames: string[]) {
-    this.fieldNames = fieldNames
-  }
+  constructor (private readonly fieldNames: string[]) {}
 
   validate (input: any): Error {
     for (const fieldName of this.fieldNames) {
