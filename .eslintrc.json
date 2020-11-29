@@ -1,13 +1,14 @@
 {
     "extends": "standard-with-typescript",
     "parserOptions": {
-        "project": "./tsconfig.json"
+        "project": "./tsconfig.eslint.json"
     },
     "rules": {
         "@typescript-eslint/comma-spacing": "off",
         "@typescript-eslint/return-await": "off",
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/strict-boolean-expressions": "off",
-        "@typescript-eslint/method-signature-style": "off"
+        "@typescript-eslint/method-signature-style": "off",
+        "@typescript-eslint/no-misused-promises": "off"
     }
 }

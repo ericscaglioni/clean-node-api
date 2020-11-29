@@ -11,7 +11,9 @@
     "test:staged": "npm test --findRelatedTests",
     "test:ci": "npm test -- --coverage",
     "check": "npm-check -s -u",
-    "start": "sucrase-node src/main/server.ts"
+    "dev": "sucrase-node src/main/server.ts",
+    "start": "node dist/main/server.js",
+    "build": "rimraf dist && tsc"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +39,7 @@
     "husky": "^4.3.0",
     "jest": "^26.5.2",
     "lint-staged": "^10.4.0",
+    "rimraf": "^3.0.2",
     "sucrase": "^3.16.0",
     "supertest": "^5.0.0",
     "ts-jest": "^26.4.1",
@@ -45,7 +48,6 @@
   "dependencies": {
     "bcrypt": "^5.0.0",
     "express": "^4.17.1",
-    "fast-glob": "^3.2.4",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.2",
     "validator": "^13.1.17"
