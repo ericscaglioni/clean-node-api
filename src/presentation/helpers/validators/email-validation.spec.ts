@@ -1,14 +1,23 @@
+import { LoadAccountByEmailRepository } from '../../../data/protocols/db/account/load-account-by-email-repository'
+import { AccountModel } from '../../../domain/models/account'
 import { InvalidParamError } from '../../errors'
-import { EmailValidator, ExistingEmailValidator } from '../../protocols'
+import { EmailValidator } from '../../protocols'
 import { EmailValidation } from './email-validation'
 
-const makeExistingEmailValidatorStub = (): ExistingEmailValidator => {
-  class ExistingEmailValidatorStub implements ExistingEmailValidator {
-    async emailAlreadyExists (email: string): Promise<boolean> {
-      return new Promise(resolve => resolve(false))
+const makeFakeAccount = (): AccountModel => ({
+  id: 'any_id',
+  name: 'any_name',
+  email: 'any_email@email.com',
+  password: 'any_hashed_password'
+})
+
+const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
+  class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
+    async loadByEmail (email: string): Promise<AccountModel> {
+      return new Promise(resolve => resolve(null))
     }
   }
-  return new ExistingEmailValidatorStub()
+  return new LoadAccountByEmailRepositoryStub()
 }
 
 const makeEmailValidator = (): EmailValidator => {
@@ -23,17 +32,17 @@ const makeEmailValidator = (): EmailValidator => {
 interface SutTypes {
   sut: EmailValidation
   emailValidatorStub: EmailValidator
-  existingEmailValidatorStub: ExistingEmailValidator
+  loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
 }
 
 const makeSut = (): SutTypes => {
-  const existingEmailValidatorStub = makeExistingEmailValidatorStub()
+  const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
   const emailValidatorStub = makeEmailValidator()
-  const sut = new EmailValidation('email', emailValidatorStub, existingEmailValidatorStub)
+  const sut = new EmailValidation('email', emailValidatorStub, loadAccountByEmailRepositoryStub)
   return {
     sut,
     emailValidatorStub,
-    existingEmailValidatorStub
+    loadAccountByEmailRepositoryStub
   }
 }
 
@@ -65,28 +74,28 @@ describe('Email Validation', () => {
 })
 
 describe('Existing Email Validator', () => {
-  test('Should call ExistingEmailValidator with correct email', async () => {
-    const { sut, existingEmailValidatorStub } = makeSut()
+  test('Should call LoadAccountByEmailRepository with correct email', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
 
-    const emailAlreadyExistsSpy = jest.spyOn(existingEmailValidatorStub, 'emailAlreadyExists')
+    const loadByEmailSpy = jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail')
 
     await sut.emailAlreadyExists('any_email@email.com')
-    expect(emailAlreadyExistsSpy).toHaveBeenCalledWith('any_email@email.com')
+    expect(loadByEmailSpy).toHaveBeenCalledWith('any_email@email.com')
   })
 
-  test('Should return true if ExistingEmailValidator returns true', async () => {
-    const { sut, existingEmailValidatorStub } = makeSut()
+  test('Should return true if LoadAccountByEmailRepository returns an account', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
 
-    jest.spyOn(existingEmailValidatorStub, 'emailAlreadyExists').mockResolvedValueOnce(true)
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(makeFakeAccount())
 
     const emailAlreadyExists = await sut.emailAlreadyExists('any_email@email.com')
     expect(emailAlreadyExists).toBeTruthy()
   })
 
   test('Should throw if ExistingEmailValidator throws', async () => {
-    const { sut, existingEmailValidatorStub } = makeSut()
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
 
-    jest.spyOn(existingEmailValidatorStub, 'emailAlreadyExists').mockImplementationOnce(() => {
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockImplementationOnce(() => {
       throw new Error()
     })
 
