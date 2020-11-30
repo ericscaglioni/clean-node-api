@@ -1,12 +1,10 @@
 import { InvalidParamError } from '../../errors'
-import { EmailValidator, ExistingEmailValidator, Validator } from '../../protocols'
-import { LoadAccountByEmailRepository } from './../../../data/protocols/db/account/load-account-by-email-repository'
+import { EmailValidator, Validator } from '../../protocols'
 
-export class EmailValidation implements Validator, ExistingEmailValidator {
+export class EmailValidation implements Validator {
   constructor (
     private readonly fieldName: string,
-    private readonly emailValidator: EmailValidator,
-    private readonly loadAccountByEmailRepository: LoadAccountByEmailRepository
+    private readonly emailValidator: EmailValidator
   ) {}
 
   validate (input: any): Error {
@@ -14,10 +12,5 @@ export class EmailValidation implements Validator, ExistingEmailValidator {
     if (!isValid) {
       return new InvalidParamError(this.fieldName)
     }
-  }
-
-  async emailAlreadyExists (email: string): Promise<boolean> {
-    const account = await this.loadAccountByEmailRepository.loadByEmail(email)
-    return !!account
   }
 }

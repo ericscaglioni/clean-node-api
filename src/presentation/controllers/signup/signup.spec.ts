@@ -1,17 +1,8 @@
-import { MissingParamError, ServerError, UserAlreadyExistsError } from '../../errors'
-import { badRequest, conflict, ok, serverError } from '../../helpers/http/http-helper'
-import { HttpRequest, ExistingEmailValidator } from './../../protocols'
+import { MissingParamError, ServerError } from '../../errors'
+import { badRequest, ok, serverError } from '../../helpers/http/http-helper'
+import { HttpRequest } from './../../protocols'
 import SignUpController from './signup'
 import { AccountModel, AddAccount, AddAccountModel, Validator } from './signup-protocols'
-
-const makeExistingEmailValidator = (): ExistingEmailValidator => {
-  class ExistingEmailValidatorStub implements ExistingEmailValidator {
-    async emailAlreadyExists (email: string): Promise<boolean> {
-      return new Promise(resolve => resolve(false))
-    }
-  }
-  return new ExistingEmailValidatorStub()
-}
 
 const makeAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
@@ -51,19 +42,16 @@ interface SutTypes {
   sut: SignUpController
   addAccountStub: AddAccount
   validatorStub: Validator
-  existingEmailValidatorStub: ExistingEmailValidator
 }
 
 const makeSut = (): SutTypes => {
-  const existingEmailValidatorStub = makeExistingEmailValidator()
   const addAccountStub = makeAddAccount()
   const validatorStub = makeValidator()
-  const sut = new SignUpController(addAccountStub, validatorStub, existingEmailValidatorStub)
+  const sut = new SignUpController(addAccountStub, validatorStub)
   return {
     sut,
     addAccountStub,
-    validatorStub,
-    existingEmailValidatorStub
+    validatorStub
   }
 }
 
@@ -114,30 +102,5 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_error')))
-  })
-
-  test('Should call ExistingEmailValidator with correct email', async () => {
-    const { sut, existingEmailValidatorStub } = makeSut()
-
-    const emailAlreadyExistsSpy = jest.spyOn(existingEmailValidatorStub, 'emailAlreadyExists')
-    await sut.handle(makeFakeRequest())
-    expect(emailAlreadyExistsSpy).toHaveBeenCalledWith('any_email@email.com')
-  })
-
-  test('Should return 500 if ExistingEmailValidator throws', async () => {
-    const { sut, existingEmailValidatorStub } = makeSut()
-
-    jest.spyOn(existingEmailValidatorStub, 'emailAlreadyExists').mockImplementationOnce(() => {
-      throw new Error()
-    })
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(serverError(new Error()))
-  })
-
-  test('Should return 409 if ExistingEmailValidator returns an account', async () => {
-    const { sut, existingEmailValidatorStub } = makeSut()
-    jest.spyOn(existingEmailValidatorStub, 'emailAlreadyExists').mockResolvedValueOnce(true)
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(conflict(new UserAlreadyExistsError()))
   })
 })
