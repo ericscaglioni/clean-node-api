@@ -1,11 +1,11 @@
-import { EmailValidator } from '../../protocols/email-validator'
-import { Validator } from '../../protocols/validator'
+import { Validator, EmailValidator, ExistingEmailValidator } from '../../protocols'
 import { InvalidParamError } from '../../errors'
 
-export class EmailValidation implements Validator {
+export class EmailValidation implements Validator, ExistingEmailValidator {
   constructor (
     private readonly fieldName: string,
-    private readonly emailValidator: EmailValidator
+    private readonly emailValidator: EmailValidator,
+    private readonly existingEmailValidator: ExistingEmailValidator
   ) {}
 
   validate (input: any): Error {
@@ -13,5 +13,9 @@ export class EmailValidation implements Validator {
     if (!isValid) {
       return new InvalidParamError(this.fieldName)
     }
+  }
+
+  async emailAlreadyExists (email: string): Promise<boolean> {
+    return await this.existingEmailValidator.emailAlreadyExists(email)
   }
 }
