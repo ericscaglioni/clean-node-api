@@ -1,5 +1,5 @@
 export default {
   port: process.env.PORT || 5050,
-  mongoUrl: process.env.MONGO_URL || 'mongodb+srv://dbUser:dbUserSenhaSecreta@cluster0.1bxdk.mongodb.net/clean-node-api?retryWrites=true&w=majority',
+  mongoUrl: process.env.MONGO_URL || 'mongodb://mongo-db:27017/clean-node-api',
   jwtSecret: process.env.JWT_SECRET || 'ah349=4##VE'
 }
