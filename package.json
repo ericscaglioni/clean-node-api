@@ -11,9 +11,10 @@
     "test:staged": "npm test --findRelatedTests",
     "test:ci": "npm test -- --coverage",
     "check": "npm-check -s -u",
-    "dev": "sucrase-node src/main/server.ts",
     "start": "node dist/main/server.js",
-    "build": "rimraf dist && tsc"
+    "build": "rimraf dist && tsc",
+    "up": "npm run build && docker-compose up -d",
+    "down": "docker-compose down"
   },
   "keywords": [],
   "author": "",
@@ -40,7 +41,6 @@
     "jest": "^26.5.2",
     "lint-staged": "^10.4.0",
     "rimraf": "^3.0.2",
-    "sucrase": "^3.16.0",
     "supertest": "^5.0.0",
     "ts-jest": "^26.4.1",
     "typescript": "^4.0.3"

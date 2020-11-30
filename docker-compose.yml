@@ -1,11 +1,11 @@
 version: "3"
 services:
-  mongo-db:
+  mongo:
     container_name: mongo-container
     image: mongo:3
     restart: always
     volumes:
-      - ./data:data/db
+      - ./data:/data/db
     ports:
       - "27017:27017"
   api:
@@ -19,4 +19,4 @@ services:
     ports:
       - "5050:5050"
     links:
-      - mongo-db
+      - mongo
