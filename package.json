@@ -13,8 +13,9 @@
     "check": "npm-check -s -u",
     "start": "node dist/main/server.js",
     "build": "rimraf dist && tsc",
-    "up": "npm run build && docker-compose up -d",
-    "down": "docker-compose down"
+    "dev:up": "npm run build && docker-compose up -d",
+    "dev:down": "docker-compose down",
+    "debug": "node --inspect=0.0.0.0:9222 --nolazy dist/main/server.js"
   },
   "keywords": [],
   "author": "",
