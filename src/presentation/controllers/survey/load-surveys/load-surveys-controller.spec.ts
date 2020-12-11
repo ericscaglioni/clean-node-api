@@ -3,7 +3,7 @@ import { LoadSurveysController } from './load-surveys-controller'
 import { HttpRequest, LoadSurveys, Pagination, SurveyModel } from './load-surveys-controller-protocols'
 
 const makeFakeRequest = (): HttpRequest => ({
-  body: {
+  query: {
     limit: 1,
     offset: 0
   }

@@ -110,5 +110,14 @@ describe('Survey Routes', () => {
         .expect(200)
       expect(httpResponse.body).toHaveLength(2)
     })
+
+    test('Should return 200 with only one survey', async () => {
+      await insertManySurveys()
+      const httpResponse = await request(app)
+        .get('/api/surveys')
+        .query({ limit: 1, offset: 0 })
+        .expect(200)
+      expect(httpResponse.body).toHaveLength(1)
+    })
   })
 })
