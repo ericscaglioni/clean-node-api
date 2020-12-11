@@ -1,6 +1,13 @@
 import { ok, serverError } from './../../../helpers/http/http-helper'
 import { LoadSurveysController } from './load-surveys-controller'
-import { LoadSurveys, SurveyModel } from './load-surveys-controller-protocols'
+import { HttpRequest, LoadSurveys, Pagination, SurveyModel } from './load-surveys-controller-protocols'
+
+const makeFakeRequest = (): HttpRequest => ({
+  body: {
+    limit: 1,
+    offset: 0
+  }
+})
 
 const makeFakeSurveys = (): SurveyModel[] => ([{
   id: 'any_id',
@@ -22,7 +29,7 @@ const makeFakeSurveys = (): SurveyModel[] => ([{
 
 const makeLoadSurveys = (): LoadSurveys => {
   class LoadSurveysStub implements LoadSurveys {
-    async load (): Promise<SurveyModel[]> {
+    async load (pagination: Pagination): Promise<SurveyModel[]> {
       return makeFakeSurveys()
     }
   }
@@ -44,11 +51,18 @@ const makeSut = (): SutTypes => {
 }
 
 describe('LoadSurveys Controller', () => {
-  test('Should call LoadSurveys', async () => {
+  test('Should call LoadSurveys with default limit and offset values', async () => {
     const { sut, loadSurveysStub } = makeSut()
     const loadSpy = jest.spyOn(loadSurveysStub, 'load')
     await sut.handle({})
-    expect(loadSpy).toHaveBeenCalled()
+    expect(loadSpy).toHaveBeenCalledWith({ limit: 10, offset: 0 })
+  })
+
+  test('Should call LoadSurveys with passed limit and offset values', async () => {
+    const { sut, loadSurveysStub } = makeSut()
+    const loadSpy = jest.spyOn(loadSurveysStub, 'load')
+    await sut.handle(makeFakeRequest())
+    expect(loadSpy).toHaveBeenCalledWith({ limit: 1, offset: 0 })
   })
 
   test('Should return 200 on success', async () => {
