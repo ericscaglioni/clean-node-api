@@ -5,6 +5,25 @@ import app from '../config/app'
 import env from '../config/env'
 import { sign } from 'jsonwebtoken'
 
+const makeAccessToken = async (): Promise<string> => {
+  const res = await accountCollection.insertOne({
+    name: 'Eric',
+    email: 'ericsf34@gmail.com',
+    password: '123',
+    role: 'admin'
+  })
+  const id = res.ops[0]._id
+  const accessToken = sign({ id }, env.jwtSecret)
+  await accountCollection.updateOne({
+    _id: id
+  }, {
+    $set: {
+      accessToken
+    }
+  })
+  return accessToken
+}
+
 const insertManySurveys = async (): Promise<void> => {
   await surveyCollection.insertMany([{
     question: 'any_question',
@@ -63,21 +82,7 @@ describe('Survey Routes', () => {
     })
 
     test('Should return 204 on add survey with access token for an admin role', async () => {
-      const res = await accountCollection.insertOne({
-        name: 'Eric',
-        email: 'ericsf34@gmail.com',
-        password: '123',
-        role: 'admin'
-      })
-      const id = res.ops[0]._id
-      const accessToken = sign({ id }, env.jwtSecret)
-      await accountCollection.updateOne({
-        _id: id
-      }, {
-        $set: {
-          accessToken
-        }
-      })
+      const accessToken = await makeAccessToken()
       await request(app)
         .post('/api/surveys')
         .set('x-access-token', accessToken)
@@ -97,25 +102,37 @@ describe('Survey Routes', () => {
   })
 
   describe('GET /surveys', () => {
-    test('Should return 204 when no survey is found', async () => {
+    test('Should return 403 on load surveys without accessToken', async () => {
       await request(app)
         .get('/api/surveys')
+        .expect(403)
+    })
+
+    test('Should return 204 when no survey is found with valid accessToken', async () => {
+      const accessToken = await makeAccessToken()
+      await request(app)
+        .get('/api/surveys')
+        .set('x-access-token', accessToken)
         .expect(204)
     })
 
     test('Should return 200 with all surveys', async () => {
+      const accessToken = await makeAccessToken()
       await insertManySurveys()
       const httpResponse = await request(app)
         .get('/api/surveys')
+        .set('x-access-token', accessToken)
         .expect(200)
       expect(httpResponse.body).toHaveLength(2)
     })
 
     test('Should return 200 with only one survey', async () => {
+      const accessToken = await makeAccessToken()
       await insertManySurveys()
       const httpResponse = await request(app)
         .get('/api/surveys')
         .query({ limit: 1, offset: 0 })
+        .set('x-access-token', accessToken)
         .expect(200)
       expect(httpResponse.body).toHaveLength(1)
     })
