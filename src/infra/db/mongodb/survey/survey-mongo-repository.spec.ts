@@ -1,6 +1,12 @@
 import { Collection } from 'mongodb'
+import { Pagination } from '../../../../domain/usecases/load-surveys'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { SurveyMongoRepository } from './survey-mongo-repository'
+
+const makeFakePagination = (): Pagination => ({
+  limit: 10,
+  offset: 0
+})
 
 let surveyCollection: Collection
 
@@ -22,19 +28,101 @@ describe('Survey Mongo Repository', () => {
     return new SurveyMongoRepository()
   }
 
-  test('Should add survey on success', async () => {
-    const sut = makeSut()
-    await sut.add({
-      question: 'any_question',
-      answers: [{
-        image: 'any_image',
-        answer: 'any_answer'
-      }, {
-        answer: 'other_answer'
-      }],
-      date: new Date()
+  describe('add()', () => {
+    test('Should add survey on success', async () => {
+      const sut = makeSut()
+      await sut.add({
+        question: 'any_question',
+        answers: [{
+          image: 'any_image',
+          answer: 'any_answer'
+        }, {
+          answer: 'other_answer'
+        }],
+        date: new Date()
+      })
+      const survey = await surveyCollection.findOne({ question: 'any_question' })
+      expect(survey).toBeTruthy()
     })
-    const survey = await surveyCollection.findOne({ question: 'any_question' })
-    expect(survey).toBeTruthy()
+  })
+
+  describe('loadAll()', () => {
+    test('Should load all surveys on success', async () => {
+      await surveyCollection.insertMany([{
+        question: 'any_question',
+        answers: [{
+          image: 'any_image',
+          answer: 'any_answer'
+        }, {
+          answer: 'other_answer'
+        }],
+        date: new Date()
+      }, {
+        question: 'other_question',
+        answers: [{
+          image: 'other_image',
+          answer: 'other_answer'
+        }, {
+          answer: 'other_answer'
+        }],
+        date: new Date()
+      }])
+      const sut = makeSut()
+      const surveys = await sut.loadAll(makeFakePagination())
+      expect(surveys).toBeTruthy()
+      expect(surveys).toHaveLength(2)
+    })
+
+    test('Should load surveys according to limit', async () => {
+      await surveyCollection.insertMany([{
+        question: 'any_question',
+        answers: [{
+          image: 'any_image',
+          answer: 'any_answer'
+        }, {
+          answer: 'other_answer'
+        }],
+        date: new Date()
+      }, {
+        question: 'other_question',
+        answers: [{
+          image: 'other_image',
+          answer: 'other_answer'
+        }, {
+          answer: 'other_answer'
+        }],
+        date: new Date()
+      }])
+      const sut = makeSut()
+      const surveys = await sut.loadAll({ limit: 1, offset: 0 })
+      expect(surveys).toBeTruthy()
+      expect(surveys).toHaveLength(1)
+    })
+
+    test('Should load surveys according to limit and offset', async () => {
+      await surveyCollection.insertMany([{
+        question: 'any_question',
+        answers: [{
+          image: 'any_image',
+          answer: 'any_answer'
+        }, {
+          answer: 'other_answer'
+        }],
+        date: new Date()
+      }, {
+        question: 'other_question',
+        answers: [{
+          image: 'other_image',
+          answer: 'other_answer'
+        }, {
+          answer: 'other_answer'
+        }],
+        date: new Date()
+      }])
+      const sut = makeSut()
+      const surveys = await sut.loadAll({ limit: 10, offset: 2 })
+      expect(surveys).toBeTruthy()
+      expect(surveys).toHaveLength(0)
+    })
   })
 })
