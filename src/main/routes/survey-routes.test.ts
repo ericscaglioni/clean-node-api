@@ -5,6 +5,28 @@ import app from '../config/app'
 import env from '../config/env'
 import { sign } from 'jsonwebtoken'
 
+const insertManySurveys = async (): Promise<void> => {
+  await surveyCollection.insertMany([{
+    question: 'any_question',
+    answers: [{
+      image: 'any_image',
+      answer: 'any_answer'
+    }, {
+      answer: 'other_answer'
+    }],
+    date: new Date()
+  }, {
+    question: 'other_question',
+    answers: [{
+      image: 'other_image',
+      answer: 'other_answer'
+    }, {
+      answer: 'other_answer'
+    }],
+    date: new Date()
+  }])
+}
+
 let surveyCollection: Collection
 let accountCollection: Collection
 
@@ -69,6 +91,8 @@ describe('Survey Routes', () => {
           }]
         })
         .expect(204)
+      const survey = await surveyCollection.findOne({ question: 'any_question' })
+      expect(survey).toBeTruthy()
     })
   })
 
@@ -77,6 +101,14 @@ describe('Survey Routes', () => {
       await request(app)
         .get('/api/surveys')
         .expect(204)
+    })
+
+    test('Should return 200 with all surveys', async () => {
+      await insertManySurveys()
+      const httpResponse = await request(app)
+        .get('/api/surveys')
+        .expect(200)
+      expect(httpResponse.body).toHaveLength(2)
     })
   })
 })
