@@ -27,7 +27,7 @@ describe('Survey Routes', () => {
   describe('POST /survey', () => {
     test('Should return 403 on add survey without access token', async () => {
       await request(app)
-        .post('/api/survey')
+        .post('/api/surveys')
         .send({
           question: 'any_question',
           answers: [{
@@ -57,7 +57,7 @@ describe('Survey Routes', () => {
         }
       })
       await request(app)
-        .post('/api/survey')
+        .post('/api/surveys')
         .set('x-access-token', accessToken)
         .send({
           question: 'any_question',
