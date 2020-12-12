@@ -12,5 +12,8 @@ module.exports = {
   transform: {
     '.+\\.ts$': 'ts-jest'
   },
-  watchPathIgnorePatterns: ['globalConfig']
+  watchPathIgnorePatterns: ['globalConfig'],
+  moduleNameMapper: {
+    '@/(.*)': '<rootDir>/src/$1'
+  }
 }
