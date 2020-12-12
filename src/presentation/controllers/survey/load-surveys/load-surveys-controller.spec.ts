@@ -1,4 +1,4 @@
-import { noContent, ok, serverError } from './../../../helpers/http/http-helper'
+import { noContent, ok, serverError } from '../../../helpers/http/http-helper'
 import { LoadSurveysController } from './load-surveys-controller'
 import { HttpRequest, LoadSurveys, Pagination, SurveyModel } from './load-surveys-controller-protocols'
 

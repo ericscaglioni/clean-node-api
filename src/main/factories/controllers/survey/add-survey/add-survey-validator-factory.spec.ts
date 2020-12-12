@@ -1,8 +1,8 @@
-import { Validator } from '../../../../../presentation/protocols'
-import { RequiredFieldsValidator, ValidatorComposite } from '../../../../../validation/validators'
+import { Validator } from '@/presentation/protocols'
+import { RequiredFieldsValidator, ValidatorComposite } from '@/validation/validators'
 import { makeAddSurveyValidator } from './add-survey-validator-factory'
 
-jest.mock('../../../../../validation/validators/validator-composite')
+jest.mock('@/validation/validators/validator-composite')
 
 describe('AddSurveyValidator Factory', () => {
   test('Should call ValidatorComposite with all validators', () => {
