@@ -1,6 +1,6 @@
 import { SurveyModel } from '../models/survey'
 
-export interface Pagination {
+export type Pagination = {
   limit: number
   offset: number
 }

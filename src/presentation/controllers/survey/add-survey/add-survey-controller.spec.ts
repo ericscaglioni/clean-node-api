@@ -30,7 +30,7 @@ const makeValidator = (): Validator => {
   return new ValidatorStub()
 }
 
-interface SutTypes {
+type SutTypes = {
   sut: AddSurveyController
   validatorStub: Validator
   addSurveyStub: AddSurvey
