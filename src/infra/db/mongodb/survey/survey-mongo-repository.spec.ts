@@ -1,5 +1,5 @@
 import { Collection } from 'mongodb'
-import { Pagination } from '@/domain/usecases/load-surveys'
+import { Pagination } from '@/domain/usecases/survey/load-surveys'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { SurveyMongoRepository } from './survey-mongo-repository'
 

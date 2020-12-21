@@ -1,4 +1,4 @@
-import { SurveyAnswer } from '../models/survey'
+import { SurveyAnswer } from '../../models/survey'
 
 export type AddSurveyModel = {
   question: string

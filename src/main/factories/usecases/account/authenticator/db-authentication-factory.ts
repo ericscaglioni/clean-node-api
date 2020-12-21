@@ -1,5 +1,5 @@
 import { DbAuthentication } from '@/data/usecases/account/authenticator/db-authenticator'
-import { Authenticator } from '@/domain/usecases/authenticator'
+import { Authenticator } from '@/domain/usecases/account/authenticator'
 import { BcryptAdapter } from '@/infra/criptography/bcrypt-adapter/bcrypt-adapter'
 import { JwtAdapter } from '@/infra/criptography/jwt-adapter/jwt-adapter'
 import { AccountMongoRepository } from '@/infra/db/mongodb/account/account-mongo-repository'
