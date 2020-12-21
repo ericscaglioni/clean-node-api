@@ -17,16 +17,18 @@ export class SurveyMongoRepository implements
 
   async loadAll ({ limit, offset }: Pagination): Promise<SurveyModel[]> {
     const surveyCollection = await MongoHelper.getCollection('surveys')
-    return await surveyCollection.find<SurveyModel>()
+    const surveys = await surveyCollection.find<SurveyModel>()
       .limit(limit)
       .skip(offset)
       .toArray()
+    return MongoHelper.mapCollection(surveys)
   }
 
   async loadById (id: string): Promise<SurveyModel> {
     const surveyCollection = await MongoHelper.getCollection('surveys')
-    return await surveyCollection.findOne<SurveyModel>({
+    const survey = await surveyCollection.findOne<SurveyModel>({
       _id: id
     })
+    return survey && MongoHelper.map(survey)
   }
 }

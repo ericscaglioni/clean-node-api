@@ -75,6 +75,7 @@ describe('Survey Mongo Repository', () => {
       const surveys = await sut.loadAll(makeFakePagination())
       expect(surveys).toBeTruthy()
       expect(surveys).toHaveLength(2)
+      expect(surveys[0].id).toBeTruthy()
     })
 
     test('Should load surveys according to limit', async () => {
@@ -110,6 +111,7 @@ describe('Survey Mongo Repository', () => {
       const sut = makeSut()
       const survey = await sut.loadById(id)
       expect(survey).toBeTruthy()
+      expect(survey.id).toBeTruthy()
     })
   })
 })
