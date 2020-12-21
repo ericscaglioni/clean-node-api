@@ -1,5 +1,6 @@
 import { SurveyModel } from '@/domain/models/survey'
 import { Pagination } from '@/domain/usecases/load-surveys'
+import MockDate from 'mockdate'
 import { LoadSurveysRepository } from '../../protocols/db/survey/load-surveys-repository'
 import { DbLoadSurveys } from './db-load-surveys'
 
@@ -50,6 +51,14 @@ const makeSut = (): SutTypes => {
 }
 
 describe('DbLoadSurveys Usecase', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+
+  afterAll(() => {
+    MockDate.reset()
+  })
+
   test('Should call LoadSurveysRepository with correct data', async () => {
     const { sut, loadSurveysRepositoryStub } = makeSut()
     const loadAllSpy = jest.spyOn(loadSurveysRepositoryStub, 'loadAll')
