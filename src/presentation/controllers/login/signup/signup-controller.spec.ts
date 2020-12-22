@@ -1,3 +1,4 @@
+import { mockAccountModel } from '@/domain/test'
 import { EmailInUseError, MissingParamError, ServerError } from '../../../errors'
 import { badRequest, forbidden, ok, serverError } from '../../../helpers/http/http-helper'
 import { HttpRequest } from '../../../protocols'
@@ -16,7 +17,7 @@ const makeAuthenticator = (): Authenticator => {
 const makeAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
     async add (account: AddAccountParams): Promise<AccountModel> {
-      return new Promise(resolve => resolve(makeFakeAccount()))
+      return new Promise(resolve => resolve(mockAccountModel()))
     }
   }
   return new AddAccountStub()
@@ -30,13 +31,6 @@ const makeValidator = (): Validator => {
   }
   return new ValidatorStub()
 }
-
-const makeFakeAccount = (): AccountModel => ({
-  id: 'valid_id',
-  name: 'valid_name',
-  email: 'valid_email@email.com',
-  password: 'valid_password'
-})
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
