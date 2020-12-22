@@ -2,11 +2,11 @@ import { EmailInUseError, MissingParamError, ServerError } from '../../../errors
 import { badRequest, forbidden, ok, serverError } from '../../../helpers/http/http-helper'
 import { HttpRequest } from '../../../protocols'
 import SignUpController from './signup-controller'
-import { AccountModel, AddAccount, AddAccountParams, AuthenticationModel, Authenticator, Validator } from './signup-controller-protocols'
+import { AccountModel, AddAccount, AddAccountParams, AuthenticationParams, Authenticator, Validator } from './signup-controller-protocols'
 
 const makeAuthenticator = (): Authenticator => {
   class AuthenticatorStub implements Authenticator {
-    async auth (authentication: AuthenticationModel): Promise<string> {
+    async auth (authentication: AuthenticationParams): Promise<string> {
       return new Promise(resolve => resolve('any_token'))
     }
   }

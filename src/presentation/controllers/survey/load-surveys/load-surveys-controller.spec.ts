@@ -1,3 +1,4 @@
+import MockDate from 'mockdate'
 import { noContent, ok, serverError } from '../../../helpers/http/http-helper'
 import { LoadSurveysController } from './load-surveys-controller'
 import { HttpRequest, LoadSurveys, Pagination, SurveyModel } from './load-surveys-controller-protocols'
@@ -51,6 +52,14 @@ const makeSut = (): SutTypes => {
 }
 
 describe('LoadSurveys Controller', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+
+  afterAll(() => {
+    MockDate.reset()
+  })
+
   test('Should call LoadSurveys with default limit and offset values', async () => {
     const { sut, loadSurveysStub } = makeSut()
     const loadSpy = jest.spyOn(loadSurveysStub, 'load')
