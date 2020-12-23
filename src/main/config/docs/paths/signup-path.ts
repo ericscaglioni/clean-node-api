@@ -1,7 +1,7 @@
 export const signUpPath = {
   post: {
     tags: ['Login'],
-    summary: 'Cadastra um usuário',
+    summary: 'Rota de cadastro de usuário',
     requestBody: {
       content: {
         'application/json': {

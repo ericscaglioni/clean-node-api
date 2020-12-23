@@ -1,5 +1,5 @@
-import { loginPath, signUpPath, surveyPath } from './paths'
-import { accountSchema, apiKeyAuthSchema, loginParamsSchema, signUpParamsSchema, surveyAnswerSchema, surveySchema, surveysSchema, addSurveyParamsSchema } from './schemas'
+import { loginPath, signUpPath, surveyPath, surveyResultPath } from './paths'
+import { accountSchema, addSurveyParamsSchema, apiKeyAuthSchema, loginParamsSchema, signUpParamsSchema, surveyAnswerSchema, surveyResultParamsSchema, surveySchema, surveysSchema, surveyResultSchema } from './schemas'
 
 export default {
   openapi: '3.0.0',
@@ -14,12 +14,13 @@ export default {
   tags: [{
     name: 'Login'
   }, {
-    name: 'Enquetes'
+    name: 'Enquete'
   }],
   paths: {
     '/login': loginPath,
     '/surveys': surveyPath,
-    '/signup': signUpPath
+    '/signup': signUpPath,
+    '/surveys/{surveyId}/results': surveyResultPath
   },
   schemas: {
     account: accountSchema,
@@ -28,7 +29,9 @@ export default {
     survey: surveySchema,
     'survey-answer': surveyAnswerSchema,
     'signup-params': signUpParamsSchema,
-    'add-survey-params': addSurveyParamsSchema
+    'add-survey-params': addSurveyParamsSchema,
+    'survey-result-params': surveyResultParamsSchema,
+    'survey-result': surveyResultSchema
   },
   components: {
     securitySchemes: {

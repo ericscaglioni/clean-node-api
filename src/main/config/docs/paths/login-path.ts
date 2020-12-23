@@ -1,7 +1,7 @@
 export const loginPath = {
   post: {
     tags: ['Login'],
-    summary: 'Faz login do usuário',
+    summary: 'Rota para login de usuário',
     requestBody: {
       content: {
         'application/json': {
