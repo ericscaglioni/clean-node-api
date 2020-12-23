@@ -1,7 +1,7 @@
 export const surveyPath = {
   get: {
     tags: ['Enquetes'],
-    summary: 'Retorna enquetes cadastradas',
+    summary: 'Rota que retorna enquetes cadastradas',
     security: [{
       apiKeyAuth: []
     }],
@@ -15,6 +15,27 @@ export const surveyPath = {
             }
           }
         }
+      }
+    }
+  },
+  post: {
+    tags: ['Enquetes'],
+    summary: 'Rota de cadastro de enquete',
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/schemas/add-survey-params'
+          }
+        }
+      }
+    },
+    security: [{
+      apiKeyAuth: []
+    }],
+    responses: {
+      204: {
+        description: 'Sucesso'
       }
     }
   }
