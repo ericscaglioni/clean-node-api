@@ -5,7 +5,7 @@ import { SurveyModel } from '@/domain/models/survey'
 import { AddSurveyParams } from '@/domain/usecases/survey/add-survey'
 import { Pagination } from '@/domain/usecases/survey/load-surveys'
 import { ObjectId } from 'mongodb'
-import { MongoHelper } from '../helpers/mongo-helper'
+import { MongoHelper } from '../helpers'
 
 export class SurveyMongoRepository implements
   AddSurveyRepository,

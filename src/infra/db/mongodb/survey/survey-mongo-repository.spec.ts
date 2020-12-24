@@ -1,6 +1,6 @@
 import { Collection } from 'mongodb'
 import { Pagination } from '@/domain/usecases/survey/load-surveys'
-import { MongoHelper } from '../helpers/mongo-helper'
+import { MongoHelper } from '../helpers'
 import { SurveyMongoRepository } from './survey-mongo-repository'
 
 const makeFakePagination = (): Pagination => ({
