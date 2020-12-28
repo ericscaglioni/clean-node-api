@@ -35,5 +35,34 @@ export const surveyResultPath = {
         }
       }
     }
+  },
+  get: {
+    security: [{
+      apiKeyAuth: []
+    }],
+    tags: ['Enquete'],
+    summary: 'Rota que retorna resposta(s) de uma enquete',
+    description: 'Essa rota só pode ser executada por **usuários autenticados**',
+    parameters: [{
+      name: 'surveyId',
+      in: 'path',
+      required: true,
+      description: 'Id de uma enquete',
+      schema: {
+        type: 'string'
+      }
+    }],
+    responses: {
+      200: {
+        description: 'Sucesso',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/schemas/survey-result'
+            }
+          }
+        }
+      }
+    }
   }
 }
