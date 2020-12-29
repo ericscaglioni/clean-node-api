@@ -15,7 +15,7 @@ export const mockAddSurvey = (): AddSurvey => {
 
 export const mockLoadSurveys = (): LoadSurveys => {
   class LoadSurveysStub implements LoadSurveys {
-    async load (pagination: Pagination): Promise<SurveyModel[]> {
+    async load (accountId: string, pagination: Pagination): Promise<SurveyModel[]> {
       return mockSurveyModels()
     }
   }

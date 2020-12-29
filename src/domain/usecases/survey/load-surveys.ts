@@ -6,5 +6,5 @@ export type Pagination = {
 }
 
 export interface LoadSurveys {
-  load (pagination: Pagination): Promise<SurveyModel[]>
+  load (accountId: string, pagination: Pagination): Promise<SurveyModel[]>
 }

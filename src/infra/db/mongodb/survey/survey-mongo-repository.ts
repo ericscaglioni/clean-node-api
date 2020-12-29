@@ -1,3 +1,4 @@
+import { QueryBuilder } from '@/infra/db/mongodb/helpers/query-builder'
 import { AddSurveyRepository } from '@/data/protocols/db/survey/add-survey-repository'
 import { LoadSurveyByIdRepository } from '@/data/protocols/db/survey/load-survey-by-id-repository'
 import { LoadSurveysRepository } from '@/data/protocols/db/survey/load-surveys-repository'
@@ -16,9 +17,36 @@ export class SurveyMongoRepository implements
     await surveyCollection.insertOne(data)
   }
 
-  async loadAll ({ limit, offset }: Pagination): Promise<SurveyModel[]> {
+  async loadAll (accountId: string, { limit, offset }: Pagination): Promise<SurveyModel[]> {
     const surveyCollection = await MongoHelper.getCollection('surveys')
-    const surveys = await surveyCollection.find<SurveyModel>()
+    const query = new QueryBuilder()
+      .lookup({
+        from: 'surveyResults',
+        localField: '_id',
+        foreignField: 'surveyId',
+        as: 'result'
+      })
+      .project({
+        _id: 1,
+        question: 1,
+        answers: 1,
+        date: 1,
+        answered: {
+          $gte: [{
+            $size: {
+              $filter: {
+                input: '$result',
+                as: 'item',
+                cond: {
+                  $eq: ['$$item.accountId', new ObjectId(accountId)]
+                }
+              }
+            }
+          }, 1]
+        }
+      })
+      .build()
+    const surveys = await surveyCollection.aggregate(query)
       .limit(limit)
       .skip(offset)
       .toArray()

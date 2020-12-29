@@ -3,7 +3,7 @@ import { LoadSurveys, LoadSurveysRepository, Pagination, SurveyModel } from './d
 export class DbLoadSurveys implements LoadSurveys {
   constructor (private readonly loadSurveysRepository: LoadSurveysRepository) {}
 
-  async load (pagination: Pagination): Promise<SurveyModel[]> {
-    return await this.loadSurveysRepository.loadAll(pagination)
+  async load (accountId: string, pagination: Pagination): Promise<SurveyModel[]> {
+    return await this.loadSurveysRepository.loadAll(accountId, pagination)
   }
 }

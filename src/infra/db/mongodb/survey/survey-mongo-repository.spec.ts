@@ -1,12 +1,19 @@
-import { Collection } from 'mongodb'
+import { AccountModel } from '@/domain/models/account'
+import { mockAddAccountParams, mockAddSurveyParams } from '@/domain/test'
 import { Pagination } from '@/domain/usecases/survey/load-surveys'
+import { Collection, ObjectId } from 'mongodb'
 import { MongoHelper } from '../helpers'
 import { SurveyMongoRepository } from './survey-mongo-repository'
 
-const makeFakePagination = (): Pagination => ({
+const mockPagination = (): Pagination => ({
   limit: 10,
   offset: 0
 })
+
+const mockAccount = async (): Promise<AccountModel> => {
+  const res = await accountCollection.insertOne(mockAddAccountParams())
+  return MongoHelper.map(res.ops[0])
+}
 
 const insertManySurveys = async (): Promise<void> => {
   await surveyCollection.insertMany([{
@@ -31,6 +38,8 @@ const insertManySurveys = async (): Promise<void> => {
 }
 
 let surveyCollection: Collection
+let accountCollection: Collection
+let surveyResultCollection: Collection
 
 describe('Survey Mongo Repository', () => {
   beforeAll(async () => {
@@ -44,6 +53,10 @@ describe('Survey Mongo Repository', () => {
   beforeEach(async () => {
     surveyCollection = await MongoHelper.getCollection('surveys')
     await surveyCollection.deleteMany({})
+    accountCollection = await MongoHelper.getCollection('accounts')
+    await accountCollection.deleteMany({})
+    surveyResultCollection = await MongoHelper.getCollection('surveyResults')
+    await surveyResultCollection.deleteMany({})
   })
 
   const makeSut = (): SurveyMongoRepository => {
@@ -70,26 +83,41 @@ describe('Survey Mongo Repository', () => {
 
   describe('loadAll()', () => {
     test('Should load all surveys on success', async () => {
-      await insertManySurveys()
+      const account = await mockAccount()
+      const addSurveyModels = [mockAddSurveyParams(), mockAddSurveyParams()]
+      const res = await surveyCollection.insertMany(addSurveyModels)
+      const survey = MongoHelper.map(res.ops[1])
+      await surveyResultCollection.insertOne({
+        surveyId: new ObjectId(survey.id),
+        accountId: new ObjectId(account.id),
+        answer: survey.answers[0].answer,
+        date: new Date()
+      })
       const sut = makeSut()
-      const surveys = await sut.loadAll(makeFakePagination())
+      const surveys = await sut.loadAll(account.id, mockPagination())
       expect(surveys).toBeTruthy()
       expect(surveys).toHaveLength(2)
       expect(surveys[0].id).toBeTruthy()
+      expect(surveys[0].question).toBe(addSurveyModels[0].question)
+      expect(surveys[0].answered).toBeFalsy()
+      expect(surveys[1].question).toBe(addSurveyModels[1].question)
+      expect(surveys[1].answered).toBeTruthy()
     })
 
     test('Should load surveys according to limit', async () => {
+      const account = await mockAccount()
       await insertManySurveys()
       const sut = makeSut()
-      const surveys = await sut.loadAll({ limit: 1, offset: 0 })
+      const surveys = await sut.loadAll(account.id, { limit: 1, offset: 0 })
       expect(surveys).toBeTruthy()
       expect(surveys).toHaveLength(1)
     })
 
     test('Should load surveys according to limit and offset', async () => {
+      const account = await mockAccount()
       await insertManySurveys()
       const sut = makeSut()
-      const surveys = await sut.loadAll({ limit: 10, offset: 2 })
+      const surveys = await sut.loadAll(account.id, { limit: 10, offset: 2 })
       expect(surveys).toBeTruthy()
       expect(surveys).toHaveLength(0)
     })

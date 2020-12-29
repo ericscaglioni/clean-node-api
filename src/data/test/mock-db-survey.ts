@@ -22,7 +22,7 @@ export const mockLoadSurveyByIdRepository = (): LoadSurveyByIdRepository => {
 
 export const mockLoadSurveysRepository = (): LoadSurveysRepository => {
   class LoadSurveysRepositoryStub implements LoadSurveysRepository {
-    async loadAll (pagination: Pagination): Promise<SurveyModel[]> {
+    async loadAll (accountId: string, pagination: Pagination): Promise<SurveyModel[]> {
       return mockSurveyModels()
     }
   }

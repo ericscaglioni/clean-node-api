@@ -9,7 +9,8 @@ const mockRequest = (): HttpRequest => ({
   query: {
     limit: 1,
     offset: 0
-  }
+  },
+  accountId: 'any_account_id'
 })
 
 type SutTypes = {
@@ -38,15 +39,17 @@ describe('LoadSurveys Controller', () => {
   test('Should call LoadSurveys with default limit and offset values', async () => {
     const { sut, loadSurveysStub } = makeSut()
     const loadSpy = jest.spyOn(loadSurveysStub, 'load')
-    await sut.handle({})
-    expect(loadSpy).toHaveBeenCalledWith({ limit: 10, offset: 0 })
+    await sut.handle({
+      accountId: 'any_account_id'
+    })
+    expect(loadSpy).toHaveBeenCalledWith('any_account_id', { limit: 10, offset: 0 })
   })
 
-  test('Should call LoadSurveys with passed limit and offset values', async () => {
+  test('Should call LoadSurveys with correct data', async () => {
     const { sut, loadSurveysStub } = makeSut()
     const loadSpy = jest.spyOn(loadSurveysStub, 'load')
     await sut.handle(mockRequest())
-    expect(loadSpy).toHaveBeenCalledWith({ limit: 1, offset: 0 })
+    expect(loadSpy).toHaveBeenCalledWith('any_account_id', { limit: 1, offset: 0 })
   })
 
   test('Should return 200 on success', async () => {
