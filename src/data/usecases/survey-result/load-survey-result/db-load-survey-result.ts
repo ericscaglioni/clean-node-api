@@ -6,8 +6,8 @@ export class DbLoadSurveyResult implements LoadSurveyResult {
     private readonly loadSurveyByIdRepository: LoadSurveyByIdRepository
   ) {}
 
-  async loadBySurveyId (surveyId: string): Promise<SurveyResultModel> {
-    let surveyResult = await this.loadSurveyResultRepository.loadBySurveyId(surveyId)
+  async loadBySurveyId (surveyId: string, accountId: string): Promise<SurveyResultModel> {
+    let surveyResult = await this.loadSurveyResultRepository.loadBySurveyId(surveyId, accountId)
     if (!surveyResult) {
       const survey = await this.loadSurveyByIdRepository.loadById(surveyId)
       surveyResult = {
@@ -17,7 +17,8 @@ export class DbLoadSurveyResult implements LoadSurveyResult {
         answers: survey.answers.map(answer => ({
           ...answer,
           count: 0,
-          percentage: 0
+          percentage: 0,
+          isCurrentAccountAnswer: false
         }))
       }
     }

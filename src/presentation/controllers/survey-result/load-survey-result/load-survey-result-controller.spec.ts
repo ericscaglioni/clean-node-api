@@ -9,7 +9,8 @@ import { HttpRequest, LoadSurveyById, LoadSurveyResult } from './load-survey-res
 const mockRequest = (): HttpRequest => ({
   params: {
     surveyId: 'any_survey_id'
-  }
+  },
+  accountId: 'any_account_id'
 })
 
 type SutTypes = {
@@ -61,11 +62,11 @@ describe('Load Survey Result Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  test('Should call LoadSurveyResult with correct value', async () => {
+  test('Should call LoadSurveyResult with correct data', async () => {
     const { sut, loadSurveyResultStub } = makeSut()
     const loadBySurveyIdSpy = jest.spyOn(loadSurveyResultStub, 'loadBySurveyId')
     await sut.handle(mockRequest())
-    expect(loadBySurveyIdSpy).toHaveBeenCalledWith('any_survey_id')
+    expect(loadBySurveyIdSpy).toHaveBeenCalledWith('any_survey_id', 'any_account_id')
   })
 
   test('Should return 500 if LoadSurveyResult throws', async () => {

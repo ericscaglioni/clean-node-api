@@ -10,4 +10,5 @@ type SurveyResultAnswerModel = {
   answer: string
   count: number
   percentage: number
+  isCurrentAccountAnswer: boolean
 }
